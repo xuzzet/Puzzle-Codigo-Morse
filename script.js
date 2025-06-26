@@ -37,6 +37,8 @@ const respostasCulto = [
 ];
 let tentativas = 3;
 let alerta = 0;
+let tempoRestante = 180; // 3 minutos
+let timerInterval = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -335,6 +337,29 @@ function configurarEventos() {
     msgInicialGabriel();
     playStatic();
   });
+}
+
+function iniciarTimer() {
+  $("timer").hidden = false;
+  tempoRestante = 180;
+  atualizarTimer();
+  timerInterval = setInterval(() => {
+    tempoRestante--;
+    atualizarTimer();
+    if (tempoRestante <= 0) {
+      clearInterval(timerInterval);
+      $("timer-count").textContent = "00:00";
+      $("saida").innerText = "[Tempo esgotado! O culto rastreou sua posição!]";
+      respostaCulto();
+      $("processar").disabled = true;
+    }
+  }, 1000);
+}
+
+function atualizarTimer() {
+  const min = String(Math.floor(tempoRestante / 60)).padStart(2, "0");
+  const sec = String(tempoRestante % 60).padStart(2, "0");
+  $("timer-count").textContent = `${min}:${sec}`;
 }
 
 configurarEventos();
