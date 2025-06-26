@@ -26,14 +26,14 @@ const respostasOperador = [
   "Se alguém receber isso, proteja as crianças de Ouro Virgem.",
   "Eles já levaram outras crianças. Não deixem levarem a Carol.",
   "Se conseguirem decifrar, avisem as autoridades. Não posso confiar em ninguém aqui.",
-  "O sinal pode ser rastreado. Se sumir, procurem por Carol."
+  "O sinal pode ser rastreado. Se sumir, procurem pela Carol."
 ];
 const respostasCulto = [
   "VOCÊS NÃO DEVERIAM OUVIR ISSO.",
   "O OLHO DE VIRGO TUDO VÊ.",
   "A VERDADE NÃO PODE SER ESCONDIDA.",
   "O SACRIFÍCIO SE APROXIMA.",
-  "CAROL É NOSSA."
+  "A CAROL É NOSSA."
 ];
 let tentativas = 3;
 let alerta = 0;
