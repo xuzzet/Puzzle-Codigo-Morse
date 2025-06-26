@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal de Decodificação - Ouro Virgem</title>
+  <meta name="description" content="Puzzle de decodificação Morse para RPG. Ajude Gabriel Lima a salvar sua filha Carol do culto de Virgo em Ouro Virgem.">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <section class="terminal" aria-label="Terminal de Decodificação" role="region">
+      <!-- Indicador de carregamento -->
+      <div class="loading" id="loading" aria-live="polite" hidden>
+        <span class="interferencia">[Sinal de rádio detectado... Decodificando]</span>
+      </div>
+      <!-- Alerta de rastreamento -->
+      <div class="alerta" id="alerta" hidden>
+        <span class="interferencia">⚠️ ALERTA: O culto de Virgo pode estar rastreando esta transmissão!</span>
+      </div>
+      <h1 tabindex="0">[ TERMINAL DE INTERCEPTAÇÃO DE SINAIS ]</h1>
+      <p class="msg-sistema" id="msg-sistema"></p>
+      <p>Mensagem recebida em código Morse modificado. Cole a mensagem abaixo para tentar decifrar:</p>
+      <label for="entrada" class="visually-hidden">Mensagem codificada</label>
+      <textarea id="entrada" placeholder="Ex: 0100_0111_0000_..." aria-label="Mensagem codificada" autocomplete="off" spellcheck="false" maxlength="512"></textarea>
+      <div class="botoes">
+        <button id="processar" type="button">INICIAR DECODIFICAÇÃO</button>
+        <button id="limpar" type="button">LIMPAR</button>
+        <button id="ouvir" type="button" title="Ouvir código">🔊 OUVIR</button>
+        <button id="copiar" type="button" style="display:none;">COPIAR RESULTADO</button>
+      </div>
+      <div class="progress-bar" id="progress-bar" hidden>
+        <div class="progress" id="progress"></div>
+      </div>
+      <output class="resultado" id="saida" aria-live="polite" role="status"></output>
+      <div class="hint" id="dica">DICA: 1 = ponto (.), 0 = traço (-), _ = espaço entre letras.</div>
+      <pre class="log-box" id="log" aria-live="polite" tabindex="0"></pre>
+      <div class="operador-resposta" id="operador-resposta"></div>
+      <!-- Áudios -->
+      <audio id="static-audio" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5e2.mp3" preload="auto"></audio>
+      <audio id="cult-audio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12e7b2e2c7.mp3" preload="auto"></audio>
+    </section>
+  </main>
+  <footer>
+    Desenvolvido por André Pereira &copy; 2025
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
