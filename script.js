@@ -1,3 +1,4 @@
+// Dicionário Morse padrão
 const morseCode = Object.freeze({
   ".-": "A", "-...": "B", "-.-.": "C", "-..": "D", ".": "E",
   "..-.": "F", "--.": "G", "....": "H", "..": "I", ".---": "J",
@@ -17,7 +18,7 @@ let resultadoAnagrama = "";
 let tentativasSenha = 0;
 let risco = 0; // 0 a 100
 
-const operadorNome = "Gabriel Lima";
+// Mensagens narrativas
 const mensagensGabriel = [
   "Aqui é Gabriel Lima, radialista de Ouro Virgem... Se alguém estiver ouvindo, por favor, responda. <span class='interferencia'>[Estática]</span>",
   "O culto de Virgo está cada vez mais ousado. Preciso de ajuda, minha filha Carol corre perigo. <span class='interferencia'>[Ruído]</span>",
@@ -42,21 +43,28 @@ const respostasCulto = [
   "CAROL É NOSSA."
 ];
 
+// Atalho para elementos
 const $ = (id) => document.getElementById(id);
 
+// Efeitos sonoros
 function playStatic() {
   const audio = $("static-audio");
-  audio.currentTime = 0;
-  audio.volume = 0.18;
-  audio.play();
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.18;
+    audio.play();
+  }
 }
 function playCulto() {
   const audio = $("cult-audio");
-  audio.currentTime = 0;
-  audio.volume = 0.22;
-  audio.play();
+  if (audio) {
+    audio.currentTime = 0;
+    audio.volume = 0.22;
+    audio.play();
+  }
 }
 
+// Log no terminal
 function logMensagem(texto, tipo = "info") {
   const log = $("log");
   const timestamp = new Date().toLocaleTimeString();
@@ -65,6 +73,7 @@ function logMensagem(texto, tipo = "info") {
   log.scrollTop = log.scrollHeight;
 }
 
+// Limpa todos os campos e reseta o estado
 function limparCampos() {
   $("entrada").value = "";
   $("saida").innerText = "";
@@ -85,100 +94,13 @@ function limparCampos() {
   msgInicialGabriel();
 }
 
+// Mostra ou esconde o loading
 function setLoading(ativo) {
   $("loading").hidden = !ativo;
   if (ativo) playStatic();
 }
 
-function mostrarDicaExtra(resultado) {
-  if (resultado.includes("?")) {
-    $("dica").innerText = "DICA: Verifique se digitou corretamente. Cada letra deve ser separada por um _ (underline).";
-  } else {
-    $("dica").innerText = "DICA: Mensagem decodificada! Compartilhe com o grupo e ajude Gabriel e Carol.";
-  }
-}
-
-function easterEgg(resultado) {
-  const palavra = resultado.replace(/[^A-Z]/gi, "").toUpperCase();
-  if (palavra === "HELP" || palavra === "SOS" || palavra.includes("SOCORRO")) {
-    setTimeout(() => {
-      alert("⚠️ Mensagem de socorro detectada! Gabriel está pedindo ajuda!");
-    }, 300);
-  }
-  if (palavra.includes("CAROL")) {
-    setTimeout(() => {
-      alert("⚠️ Nome de Carol detectado! Ela pode estar em perigo. Não ignore este pedido.");
-    }, 400);
-  }
-  if (palavra.includes("VIRGO")) {
-    setTimeout(() => {
-      alert("⚠️ O culto de Virgo está envolvido. Cuidado com rastreamento!");
-    }, 500);
-  }
-  if (palavra.includes("OURO")) {
-    setTimeout(() => {
-      alert("⚠️ Ouro Virgem: a cidade está em alerta. Investigue imediatamente!");
-    }, 600);
-  }
-  if (palavra.includes("GABRIEL")) {
-    setTimeout(() => {
-      alert("⚠️ Gabriel Lima: radialista em perigo. Ele precisa de ajuda urgente!");
-    }, 700);
-  }
-}
-
-function barraProgresso(callback) {
-  $("progress-bar").hidden = false;
-  $("progress").style.width = "0%";
-  let progresso = 0;
-  const intervalo = setInterval(() => {
-    progresso += Math.random() * 20 + 10;
-    if (progresso >= 100) {
-      $("progress").style.width = "100%";
-      clearInterval(intervalo);
-      setTimeout(callback, 400);
-    } else {
-      $("progress").style.width = `${Math.min(progresso, 100)}%`;
-    }
-  }, 200);
-}
-
-function animarResultado(texto, callback) {
-  $("saida").innerText = "";
-  $("saida").classList.add("terminal-cursor");
-  let i = 0;
-  function escrever() {
-    if (i < texto.length) {
-      $("saida").innerText += texto[i];
-      i++;
-      setTimeout(escrever, 40 + Math.random() * 40);
-    } else {
-      $("saida").classList.remove("terminal-cursor");
-      if (callback) callback();
-    }
-  }
-  escrever();
-}
-
-function respostaOperador(resultado) {
-  let idx = 0;
-  if (risco >= 66) idx = 4;
-  else if (risco >= 33) idx = 1;
-  else idx = Math.floor(Math.random() * respostasOperador.length);
-
-  if (resultado && !resultado.includes("?")) {
-    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
-  } else {
-    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: ${respostasOperador[idx]}</span>`;
-  }
-}
-
-function respostaCulto() {
-  const idx = Math.floor(Math.random() * respostasCulto.length);
-  $("operador-resposta").innerHTML = `<span class="interferencia" style="color:#ff2222;">[Culto de Virgo]: ${respostasCulto[idx]}</span>`;
-  playCulto();
-}
-
+// Barra de risco visual
 function atualizarBarraRisco() {
   $("barra-risco").hidden = false;
   $("risco").style.width = `${risco}%`;
@@ -199,10 +121,12 @@ function atualizarBarraRisco() {
   }
 }
 
+// Embaralha as letras para o anagrama
 function embaralhar(str) {
   return str.split('').sort(() => Math.random() - 0.5).join('');
 }
 
+// Mostra a camada de senha/anagrama
 function mostrarCamadaSenha(anagrama) {
   $("senha-camada").hidden = false;
   $("senha").value = "";
@@ -215,14 +139,22 @@ function mostrarCamadaSenha(anagrama) {
   $("copiar").style.display = "none";
 }
 
+// Esconde a camada de senha
 function esconderCamadaSenha() {
   $("senha-camada").hidden = true;
   $("senha-feedback").textContent = "";
 }
 
+// Verifica a senha digitada
 function verificarSenha() {
   const tentativa = $("senha").value.trim().toUpperCase();
   tentativasSenha++;
+  if (!tentativa) {
+    $("senha-feedback").textContent = "Digite uma senha.";
+    $("senha-feedback").className = "senha-feedback erro";
+    setTimeout(() => $("senha").focus(), 100);
+    return;
+  }
   if (tentativa === senhaCorreta) {
     $("senha-feedback").textContent = "Senha correta!";
     $("senha-feedback").className = "senha-feedback sucesso";
@@ -247,6 +179,7 @@ function verificarSenha() {
   }
 }
 
+// Decodifica a mensagem e inicia o puzzle em camadas
 function corrigirEDecodificar() {
   if (risco >= 100) {
     $("saida").innerText = "[Terminal bloqueado temporariamente]";
@@ -332,16 +265,45 @@ function corrigirEDecodificar() {
   });
 }
 
+// Barra de progresso animada
+function barraProgresso(callback) {
+  $("progress-bar").hidden = false;
+  $("progress").style.width = "0%";
+  let progresso = 0;
+  const intervalo = setInterval(() => {
+    progresso += Math.random() * 20 + 10;
+    if (progresso >= 100) {
+      $("progress").style.width = "100%";
+      clearInterval(intervalo);
+      setTimeout(callback, 400);
+    } else {
+      $("progress").style.width = `${Math.min(progresso, 100)}%`;
+    }
+  }, 200);
+}
+
+// Copia o resultado final para a área de transferência
 function copiarResultado() {
   const saida = $("saida").innerText.replace(/^\[Mensagem Final de Gabriel\]:\s*/i, "");
   if (saida) {
-    navigator.clipboard.writeText(saida);
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      navigator.clipboard.writeText(saida);
+    } else {
+      // Fallback para navegadores antigos
+      const temp = document.createElement("textarea");
+      temp.value = saida;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
     logMensagem("Mensagem copiada para a área de transferência.");
     $("copiar").innerText = "COPIADO!";
     setTimeout(() => $("copiar").innerText = "COPIAR RESULTADO", 1200);
   }
 }
 
+// Ouve o código morse digitado
 function ouvirCodigo() {
   playStatic();
   setTimeout(() => {
@@ -377,22 +339,103 @@ function ouvirCodigo() {
   }, 600);
 }
 
+// Mensagem inicial de Gabriel
 function msgInicialGabriel() {
   const idx = Math.floor(Math.random() * mensagensGabriel.length);
   $("msg-sistema").innerHTML = mensagensGabriel[idx];
 }
 
+// Resposta narrativa do operador
+function respostaOperador(resultado) {
+  let idx = 0;
+  if (risco >= 66) idx = 4;
+  else if (risco >= 33) idx = 1;
+  else idx = Math.floor(Math.random() * respostasOperador.length);
+
+  if (resultado && !resultado.includes("?")) {
+    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
+  } else {
+    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: ${respostasOperador[idx]}</span>`;
+  }
+}
+
+// Resposta narrativa do culto
+function respostaCulto() {
+  const idx = Math.floor(Math.random() * respostasCulto.length);
+  $("operador-resposta").innerHTML = `<span class="interferencia" style="color:#ff2222;">[Culto de Virgo]: ${respostasCulto[idx]}</span>`;
+  playCulto();
+}
+
+// Easter eggs narrativos
+function easterEgg(resultado) {
+  const palavra = resultado.replace(/[^A-Z]/gi, "").toUpperCase();
+  if (palavra === "HELP" || palavra === "SOS" || palavra.includes("SOCORRO")) {
+    setTimeout(() => {
+      alert("⚠️ Mensagem de socorro detectada! Gabriel está pedindo ajuda!");
+    }, 300);
+  }
+  if (palavra.includes("CAROL")) {
+    setTimeout(() => {
+      alert("⚠️ Nome de Carol detectado! Ela pode estar em perigo. Não ignore este pedido.");
+    }, 400);
+  }
+  if (palavra.includes("VIRGO")) {
+    setTimeout(() => {
+      alert("⚠️ O culto de Virgo está envolvido. Cuidado com rastreamento!");
+    }, 500);
+  }
+  if (palavra.includes("OURO")) {
+    setTimeout(() => {
+      alert("⚠️ Ouro Virgem: a cidade está em alerta. Investigue imediatamente!");
+    }, 600);
+  }
+  if (palavra.includes("GABRIEL")) {
+    setTimeout(() => {
+      alert("⚠️ Gabriel Lima: radialista em perigo. Ele precisa de ajuda urgente!");
+    }, 700);
+  }
+}
+
+// Função de vibração para dispositivos móveis
+function vibrar(ms = 50) {
+  if (window.navigator && typeof window.navigator.vibrate === "function") {
+    try {
+      window.navigator.vibrate([ms]);
+    } catch (e) { /* ignora erro */ }
+  }
+}
+
+// Eventos principais
 function configurarEventos() {
-  $("processar").addEventListener("click", corrigirEDecodificar);
-  $("limpar").addEventListener("click", limparCampos);
-  $("copiar").addEventListener("click", copiarResultado);
-  $("ouvir").addEventListener("click", ouvirCodigo);
-  $("enviar-senha").addEventListener("click", verificarSenha);
+  $("processar").addEventListener("click", () => {
+    vibrar(30);
+    corrigirEDecodificar();
+  });
+  $("limpar").addEventListener("click", () => {
+    vibrar(20);
+    limparCampos();
+  });
+  $("copiar").addEventListener("click", () => {
+    vibrar(15);
+    copiarResultado();
+  });
+  $("ouvir").addEventListener("click", () => {
+    vibrar(20);
+    ouvirCodigo();
+  });
+  $("enviar-senha").addEventListener("click", () => {
+    vibrar(25);
+    verificarSenha();
+  });
   $("senha").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") verificarSenha();
+    if (e.key === "Enter") {
+      vibrar(18);
+      verificarSenha();
+    }
   });
   $("entrada").addEventListener("keydown", function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      vibrar(18);
       corrigirEDecodificar();
     }
   });

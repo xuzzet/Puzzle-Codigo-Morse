@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Terminal de Decodificação - Ouro Virgem</title>
   <meta name="description" content="Puzzle de decodificação Morse para RPG. Ajude Gabriel Lima a salvar sua filha Carol do culto de Virgo em Ouro Virgem.">
   <link rel="stylesheet" href="style.css">
@@ -37,9 +37,9 @@
       <output class="resultado" id="saida" aria-live="polite" role="status"></output>
       <div class="senha-camada" id="senha-camada" hidden>
         <label for="senha" class="visually-hidden">Senha</label>
-        <input type="text" id="senha" maxlength="20" autocomplete="off" placeholder="Digite a senha...">
+        <input type="text" id="senha" maxlength="20" autocomplete="off" placeholder="Digite a senha..." inputmode="text">
         <button id="enviar-senha" type="button">ENVIAR SENHA</button>
-        <div class="senha-feedback" id="senha-feedback"></div>
+        <div class="senha-feedback" id="senha-feedback" aria-live="polite"></div>
       </div>
       <div class="hint" id="dica">DICA: 1 = ponto (.), 0 = traço (-), _ = espaço entre letras.</div>
       <pre class="log-box" id="log" aria-live="polite" tabindex="0"></pre>

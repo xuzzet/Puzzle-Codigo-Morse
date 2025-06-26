@@ -352,3 +352,54 @@ footer {
     font-size: 1.2rem;
   }
 }
+
+/* Melhorias mobile */
+@media (max-width: 600px) {
+  .terminal {
+    padding: 6vw 2vw;
+    margin-top: 8px;
+    border-width: 2px;
+  }
+  .botoes {
+    flex-direction: column;
+    gap: 10px;
+  }
+  button, .senha-camada button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 1.15rem;
+    padding: 14px 0;
+    border-radius: 10px;
+  }
+  .senha-camada input {
+    width: 100%;
+    font-size: 1.1rem;
+    min-height: 44px;
+    margin-bottom: 6px;
+  }
+  textarea {
+    font-size: 1.05rem;
+    height: 70px;
+    min-height: 48px;
+  }
+  .resultado, .log-box {
+    font-size: 1.05rem;
+  }
+}
+
+/* Fallbacks para gradientes e transições */
+button, .progress, .risco {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  /* Gradiente com prefixos */
+  background: linear-gradient(90deg, #003322 0%, #00ff9d22 100%);
+  background: -webkit-linear-gradient(left, #003322 0%, #00ff9d22 100%);
+}
+.progress, .risco {
+  background: linear-gradient(90deg, #00ff9d 60%, #44ffcc 100%);
+  background: -webkit-linear-gradient(left, #00ff9d 60%, #44ffcc 100%);
+}
+.risco {
+  background: linear-gradient(90deg, #ff0000 60%, #ffb300 100%);
+  background: -webkit-linear-gradient(left, #ff0000 60%, #ffb300 100%);
+}
