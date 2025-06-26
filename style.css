@@ -36,10 +36,18 @@ h1 {
   color: #00ff9d;
   margin-bottom: 24px;
   letter-spacing: 2px;
-  font-size: 2.0rem;
+  font-size: 2.1rem;
   text-shadow: 0 0 16px #00ff9d88, 0 0 2px #fff;
   font-family: inherit;
-  white-space: nowrap; /* Impede quebra de linha */
+  white-space: nowrap;
+}
+
+@media (max-width: 500px) {
+  h1 {
+    font-size: 1rem;
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 textarea {
@@ -131,6 +139,25 @@ button:disabled {
   box-shadow: 0 0 12px #00ff9d88;
 }
 
+.barra-risco {
+  width: 100%;
+  background: #330000;
+  border: 1.5px solid #ff0000;
+  border-radius: 7px;
+  margin: 18px 0 0 0;
+  height: 16px;
+  overflow: hidden;
+  display: block;
+  box-shadow: 0 0 12px #ff000033;
+}
+.risco {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff0000 60%, #ffb300 100%);
+  transition: width 0.3s;
+  box-shadow: 0 0 12px #ff000088;
+}
+
 .alerta {
   background: linear-gradient(90deg, #ff000033 0%, #ffb30033 100%);
   color: #ffb;
@@ -179,6 +206,45 @@ button:disabled {
   animation: blink 1s infinite;
   color: #00ff9d;
   margin-left: 2px;
+}
+
+.senha-camada {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.senha-camada input {
+  background: #0a0a0a;
+  color: #00ff9d;
+  border: 1.5px solid #00ff9d;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-family: inherit;
+  width: 180px;
+  transition: border-color 0.2s;
+}
+.senha-camada input:focus-visible {
+  outline: 2px solid #44ffcc;
+  border-color: #44ffcc;
+}
+.senha-camada button {
+  padding: 8px 18px;
+  font-size: 1rem;
+}
+.senha-feedback {
+  color: #ffb300;
+  margin-left: 10px;
+  font-size: 1rem;
+  min-width: 120px;
+}
+.senha-feedback.sucesso {
+  color: #00ff9d;
+}
+.senha-feedback.erro {
+  color: #ff2222;
 }
 
 .msg-sistema {
@@ -269,54 +335,6 @@ footer {
   letter-spacing: 1px;
 }
 
-.timer {
-  color: #ffb300;
-  font-weight: bold;
-  font-size: 1.1rem;
-  text-align: center;
-  margin-bottom: 10px;
-  letter-spacing: 1px;
-}
-
-.senha-camada {
-  margin-top: 18px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.senha-camada input {
-  background: #0a0a0a;
-  color: #00ff9d;
-  border: 1.5px solid #00ff9d;
-  border-radius: 5px;
-  padding: 8px 16px;
-  font-size: 1rem;
-  font-family: inherit;
-  width: 180px;
-  transition: border-color 0.2s;
-}
-.senha-camada input:focus-visible {
-  outline: 2px solid #44ffcc;
-  border-color: #44ffcc;
-}
-.senha-camada button {
-  padding: 8px 18px;
-  font-size: 1rem;
-}
-.senha-feedback {
-  color: #ffb300;
-  margin-left: 10px;
-  font-size: 1rem;
-  min-width: 120px;
-}
-.senha-feedback.sucesso {
-  color: #00ff9d;
-}
-.senha-feedback.erro {
-  color: #ff2222;
-}
-
 @media (max-width: 700px) {
   .terminal {
     padding: 10px 2vw;
@@ -332,13 +350,5 @@ footer {
   }
   h1 {
     font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 500px) {
-  h1 {
-    font-size: 1rem;
-    white-space: normal; /* Permite quebrar em telas muito pequenas */
-    word-break: break-word;
   }
 }

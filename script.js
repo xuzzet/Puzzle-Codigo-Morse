@@ -11,6 +11,12 @@ const morseCode = Object.freeze({
   "/": " "
 });
 
+// Palavra correta para o anagrama (mude conforme o puzzle)
+const senhaCorreta = "SOCORRO";
+let resultadoAnagrama = "";
+let tentativasSenha = 0;
+let risco = 0; // 0 a 100
+
 const operadorNome = "Gabriel Lima";
 const mensagensGabriel = [
   "Aqui é Gabriel Lima, radialista de Ouro Virgem... Se alguém estiver ouvindo, por favor, responda. <span class='interferencia'>[Estática]</span>",
@@ -26,23 +32,15 @@ const respostasOperador = [
   "Se alguém receber isso, proteja as crianças de Ouro Virgem.",
   "Eles já levaram outras crianças. Não deixem levarem a Carol.",
   "Se conseguirem decifrar, avisem as autoridades. Não posso confiar em ninguém aqui.",
-  "O sinal pode ser rastreado. Se sumir, procurem pela Carol."
+  "O sinal pode ser rastreado. Se sumir, procurem por Carol."
 ];
 const respostasCulto = [
   "VOCÊS NÃO DEVERIAM OUVIR ISSO.",
   "O OLHO DE VIRGO TUDO VÊ.",
   "A VERDADE NÃO PODE SER ESCONDIDA.",
   "O SACRIFÍCIO SE APROXIMA.",
-  "A CAROL É NOSSA."
+  "CAROL É NOSSA."
 ];
-let tentativas = 3;
-let alerta = 0;
-let tempoRestante = 180; // 3 minutos
-let timerInterval = null;
-
-// Palavra correta para o anagrama (mude conforme o puzzle)
-const senhaCorreta = "SOCORRO"; // Exemplo, pode ser "CAROL", "VIRGO", etc.
-let resultadoAnagrama = ""; // Guarda o resultado decodificado
 
 const $ = (id) => document.getElementById(id);
 
@@ -63,7 +61,7 @@ function logMensagem(texto, tipo = "info") {
   const log = $("log");
   const timestamp = new Date().toLocaleTimeString();
   const prefix = tipo === "erro" ? "[ERRO]" : ">";
-  log.innerText += `[${timestamp}] ${prefix} ${texto}\n`;
+  log.textContent += `[${timestamp}] ${prefix} ${texto}\n`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -78,8 +76,11 @@ function limparCampos() {
   $("operador-resposta").innerText = "";
   $("progress-bar").hidden = true;
   $("alerta").hidden = true;
-  tentativas = 3;
-  alerta = 0;
+  $("barra-risco").hidden = true;
+  $("senha-camada").hidden = true;
+  $("risco").style.width = "0%";
+  tentativasSenha = 0;
+  risco = 0;
   $("entrada").focus();
   msgInicialGabriel();
 }
@@ -161,13 +162,12 @@ function animarResultado(texto, callback) {
 
 function respostaOperador(resultado) {
   let idx = 0;
-  if (tentativas === 2) idx = 1;
-  else if (tentativas === 1) idx = 4;
+  if (risco >= 66) idx = 4;
+  else if (risco >= 33) idx = 1;
   else idx = Math.floor(Math.random() * respostasOperador.length);
 
-  // Se decodificou corretamente, Gabriel agradece
   if (resultado && !resultado.includes("?")) {
-    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança. Por favor, ajudem Carol!</span>`;
+    $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
   } else {
     $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: ${respostasOperador[idx]}</span>`;
   }
@@ -179,21 +179,82 @@ function respostaCulto() {
   playCulto();
 }
 
+function atualizarBarraRisco() {
+  $("barra-risco").hidden = false;
+  $("risco").style.width = `${risco}%`;
+  if (risco >= 100) {
+    $("saida").innerText = "[O culto de Virgo interceptou sua transmissão! Aguarde para tentar novamente...]";
+    respostaCulto();
+    $("processar").disabled = true;
+    $("senha").value = "";
+    $("senha-camada").hidden = true;
+    setTimeout(() => {
+      risco = 0;
+      $("barra-risco").hidden = true;
+      $("processar").disabled = false;
+      $("saida").innerText = "";
+      $("operador-resposta").innerText = "";
+      msgInicialGabriel();
+    }, 30000);
+  }
+}
+
+function embaralhar(str) {
+  return str.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+function mostrarCamadaSenha(anagrama) {
+  $("senha-camada").hidden = false;
+  $("senha").value = "";
+  $("senha-feedback").textContent = "";
+  setTimeout(() => $("senha").focus(), 100);
+  resultadoAnagrama = anagrama;
+  tentativasSenha = 0;
+  $("saida").innerText = `[Mensagem Decodificada]: ${anagrama}\n\nDigite a senha correta para liberar a mensagem!`;
+  $("copiar").classList.remove("mostrar");
+  $("copiar").style.display = "none";
+}
+
+function esconderCamadaSenha() {
+  $("senha-camada").hidden = true;
+  $("senha-feedback").textContent = "";
+}
+
+function verificarSenha() {
+  const tentativa = $("senha").value.trim().toUpperCase();
+  tentativasSenha++;
+  if (tentativa === senhaCorreta) {
+    $("senha-feedback").textContent = "Senha correta!";
+    $("senha-feedback").className = "senha-feedback sucesso";
+    setTimeout(() => {
+      esconderCamadaSenha();
+      $("saida").innerText = `[Mensagem Final de Gabriel]:\n\n"Se você conseguiu decifrar isto, por favor, escute com atenção. Eles estão em toda parte. O culto de Virgo já levou outras crianças e agora vigiam cada passo meu. Não sei quanto tempo me resta. Minha filha Carol é o próximo alvo. Não confie em ninguém de Ouro Virgem. Se puder ajudar, faça rápido... antes que o silêncio da rádio seja tudo o que reste de mim."`;
+      $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
+      $("copiar").classList.add("mostrar");
+      $("copiar").style.display = "inline-block";
+    }, 1200);
+    risco = 0;
+    atualizarBarraRisco();
+  } else {
+    $("senha-feedback").textContent = "Senha incorreta!";
+    $("senha-feedback").className = "senha-feedback erro";
+    setTimeout(() => $("senha").focus(), 100);
+    if (tentativasSenha === 2) {
+      $("senha-feedback").textContent += " Dica: É um pedido de socorro.";
+    }
+    risco += 20;
+    atualizarBarraRisco();
+  }
+}
+
 function corrigirEDecodificar() {
-  if (tentativas <= 0) {
+  if (risco >= 100) {
     $("saida").innerText = "[Terminal bloqueado temporariamente]";
     respostaCulto();
     $("alerta").hidden = false;
+    $("senha-camada").hidden = true;
     logMensagem("Terminal bloqueado! O culto de Virgo pode estar rastreando a transmissão...", "erro");
     $("dica").innerText = "DICA: Aguarde 30 segundos para tentar novamente. Mantenha-se oculto!";
-    setTimeout(() => {
-      tentativas = 3;
-      alerta = 0;
-      $("alerta").hidden = true;
-      $("dica").innerText = "DICA: 1 = ponto (.), 0 = traço (-), _ = espaço entre letras.";
-      $("saida").innerText = "";
-      msgInicialGabriel();
-    }, 30000);
     return;
   }
 
@@ -209,7 +270,7 @@ function corrigirEDecodificar() {
   $("progress-bar").hidden = false;
   $("progress").style.width = "0%";
 
-  if (alerta > 0) $("alerta").hidden = false;
+  if (risco > 0) $("alerta").hidden = false;
 
   logMensagem("Interceptando transmissão de Gabriel Lima...");
   let entrada = $("entrada").value.trim();
@@ -223,10 +284,9 @@ function corrigirEDecodificar() {
       btn.disabled = false;
       setLoading(false);
       $("progress-bar").hidden = true;
-      tentativas--;
-      alerta++;
-      if (alerta >= 2) $("alerta").hidden = false;
-      if (tentativas <= 0) respostaCulto();
+      risco += 33;
+      atualizarBarraRisco();
+      if (risco >= 100) respostaCulto();
     }, 600);
     return;
   }
@@ -251,10 +311,9 @@ function corrigirEDecodificar() {
         $("saida").innerText = "[Erro]: Nenhum resultado válido encontrado.";
         logMensagem("Decodificação falhou: sem correspondências.", "erro");
         $("dica").innerText = "DICA: Tente revisar a mensagem recebida.";
-        tentativas--;
-        alerta++;
-        if (alerta >= 2) $("alerta").hidden = false;
-        if (tentativas <= 0) respostaCulto();
+        risco += 33;
+        atualizarBarraRisco();
+        if (risco >= 100) respostaCulto();
         else respostaOperador();
       } else {
         // Puzzle em camadas: mostra anagrama e pede senha
@@ -262,9 +321,7 @@ function corrigirEDecodificar() {
         mostrarCamadaSenha(anagrama);
         logMensagem("Decodificação concluída. Anagrama exibido no terminal.");
         easterEgg(resultado);
-        alerta = 0;
         $("alerta").hidden = true;
-        // Não mostra botão copiar até acertar a senha
         $("copiar").classList.remove("mostrar");
         $("copiar").style.display = "none";
       }
@@ -276,7 +333,7 @@ function corrigirEDecodificar() {
 }
 
 function copiarResultado() {
-  const saida = $("saida").innerText.replace("[Mensagem Decodificada]: ", "");
+  const saida = $("saida").innerText.replace(/^\[Mensagem Final de Gabriel\]:\s*/i, "");
   if (saida) {
     navigator.clipboard.writeText(saida);
     logMensagem("Mensagem copiada para a área de transferência.");
@@ -325,50 +382,19 @@ function msgInicialGabriel() {
   $("msg-sistema").innerHTML = mensagensGabriel[idx];
 }
 
-function mostrarCamadaSenha(anagrama) {
-  $("senha-camada").hidden = false;
-  $("senha").value = "";
-  $("senha-feedback").textContent = "";
-  $("senha").focus();
-  resultadoAnagrama = anagrama;
-  $("saida").innerText = `[Mensagem Decodificada]: ${anagrama}\n\nDigite a senha correta para liberar a mensagem!`;
-}
-
-function esconderCamadaSenha() {
-  $("senha-camada").hidden = true;
-  $("senha-feedback").textContent = "";
-}
-
-function verificarSenha() {
-  const tentativa = $("senha").value.trim().toUpperCase();
-  if (tentativa === senhaCorreta) {
-    $("senha-feedback").textContent = "Senha correta!";
-    $("senha-feedback").className = "senha-feedback sucesso";
-    setTimeout(() => {
-      esconderCamadaSenha();
-      $("saida").innerText = `[Mensagem Final de Gabriel]:\n\n"Por favor, ajudem! O culto de Virgo está atrás da minha filha Carol. Não tenho mais a quem recorrer. Se você decifrou isso, salve-a!"`;
-      $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
-    }, 1200);
-  } else {
-    $("senha-feedback").textContent = "Senha incorreta!";
-    $("senha-feedback").className = "senha-feedback erro";
-    $("senha").focus();
-  }
-}
-
 function configurarEventos() {
   $("processar").addEventListener("click", corrigirEDecodificar);
   $("limpar").addEventListener("click", limparCampos);
   $("copiar").addEventListener("click", copiarResultado);
   $("ouvir").addEventListener("click", ouvirCodigo);
+  $("enviar-senha").addEventListener("click", verificarSenha);
+  $("senha").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") verificarSenha();
+  });
   $("entrada").addEventListener("keydown", function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       corrigirEDecodificar();
     }
-  });
-  $("enviar-senha").addEventListener("click", verificarSenha);
-  $("senha").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") verificarSenha();
   });
   window.addEventListener("DOMContentLoaded", () => {
     $("entrada").focus();
@@ -376,29 +402,6 @@ function configurarEventos() {
     msgInicialGabriel();
     playStatic();
   });
-}
-
-function iniciarTimer() {
-  $("timer").hidden = false;
-  tempoRestante = 180;
-  atualizarTimer();
-  timerInterval = setInterval(() => {
-    tempoRestante--;
-    atualizarTimer();
-    if (tempoRestante <= 0) {
-      clearInterval(timerInterval);
-      $("timer-count").textContent = "00:00";
-      $("saida").innerText = "[Tempo esgotado! O culto rastreou sua posição!]";
-      respostaCulto();
-      $("processar").disabled = true;
-    }
-  }, 1000);
-}
-
-function atualizarTimer() {
-  const min = String(Math.floor(tempoRestante / 60)).padStart(2, "0");
-  const sec = String(tempoRestante % 60).padStart(2, "0");
-  $("timer-count").textContent = `${min}:${sec}`;
 }
 
 configurarEventos();

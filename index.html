@@ -11,13 +11,14 @@
 <body>
   <main>
     <section class="terminal" aria-label="Terminal de Decodificação" role="region">
-      <!-- Indicador de carregamento -->
       <div class="loading" id="loading" aria-live="polite" hidden>
         <span class="interferencia">[Sinal de rádio detectado... Decodificando]</span>
       </div>
-      <!-- Alerta de rastreamento -->
       <div class="alerta" id="alerta" hidden>
         <span class="interferencia">⚠️ ALERTA: O culto de Virgo pode estar rastreando esta transmissão!</span>
+      </div>
+      <div class="barra-risco" id="barra-risco" hidden>
+        <div class="risco" id="risco"></div>
       </div>
       <h1 tabindex="0">[ TERMINAL DE INTERCEPTAÇÃO DE SINAIS ]</h1>
       <p class="msg-sistema" id="msg-sistema"></p>
@@ -43,11 +44,6 @@
       <div class="hint" id="dica">DICA: 1 = ponto (.), 0 = traço (-), _ = espaço entre letras.</div>
       <pre class="log-box" id="log" aria-live="polite" tabindex="0"></pre>
       <div class="operador-resposta" id="operador-resposta"></div>
-      <!-- Timer -->
-      <div class="timer" id="timer" hidden>
-        <span>Tempo restante: <span id="timer-count">03:00</span></span>
-      </div>
-      <!-- Áudios -->
       <audio id="static-audio" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5e2.mp3" preload="auto"></audio>
       <audio id="cult-audio" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12e7b2e2c7.mp3" preload="auto"></audio>
     </section>
