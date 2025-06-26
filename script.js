@@ -40,6 +40,10 @@ let alerta = 0;
 let tempoRestante = 180; // 3 minutos
 let timerInterval = null;
 
+// Palavra correta para o anagrama (mude conforme o puzzle)
+const senhaCorreta = "SOCORRO"; // Exemplo, pode ser "CAROL", "VIRGO", etc.
+let resultadoAnagrama = ""; // Guarda o resultado decodificado
+
 const $ = (id) => document.getElementById(id);
 
 function playStatic() {
@@ -253,16 +257,16 @@ function corrigirEDecodificar() {
         if (tentativas <= 0) respostaCulto();
         else respostaOperador();
       } else {
-        animarResultado("[Mensagem Decodificada]: " + resultado, () => {
-          logMensagem("Decodificação concluída. Mensagem de Gabriel exibida no terminal.");
-          mostrarDicaExtra(resultado);
-          $("copiar").classList.add("mostrar");
-          $("copiar").style.display = "inline-block";
-          easterEgg(resultado);
-          respostaOperador(resultado);
-          alerta = 0;
-          $("alerta").hidden = true;
-        });
+        // Puzzle em camadas: mostra anagrama e pede senha
+        const anagrama = embaralhar(resultado.replace(/ /g, ''));
+        mostrarCamadaSenha(anagrama);
+        logMensagem("Decodificação concluída. Anagrama exibido no terminal.");
+        easterEgg(resultado);
+        alerta = 0;
+        $("alerta").hidden = true;
+        // Não mostra botão copiar até acertar a senha
+        $("copiar").classList.remove("mostrar");
+        $("copiar").style.display = "none";
       }
       btn.disabled = false;
       setLoading(false);
@@ -321,6 +325,37 @@ function msgInicialGabriel() {
   $("msg-sistema").innerHTML = mensagensGabriel[idx];
 }
 
+function mostrarCamadaSenha(anagrama) {
+  $("senha-camada").hidden = false;
+  $("senha").value = "";
+  $("senha-feedback").textContent = "";
+  $("senha").focus();
+  resultadoAnagrama = anagrama;
+  $("saida").innerText = `[Mensagem Decodificada]: ${anagrama}\n\nDigite a senha correta para liberar a mensagem!`;
+}
+
+function esconderCamadaSenha() {
+  $("senha-camada").hidden = true;
+  $("senha-feedback").textContent = "";
+}
+
+function verificarSenha() {
+  const tentativa = $("senha").value.trim().toUpperCase();
+  if (tentativa === senhaCorreta) {
+    $("senha-feedback").textContent = "Senha correta!";
+    $("senha-feedback").className = "senha-feedback sucesso";
+    setTimeout(() => {
+      esconderCamadaSenha();
+      $("saida").innerText = `[Mensagem Final de Gabriel]:\n\n"Por favor, ajudem! O culto de Virgo está atrás da minha filha Carol. Não tenho mais a quem recorrer. Se você decifrou isso, salve-a!"`;
+      $("operador-resposta").innerHTML = `<span class="interferencia">[Gabriel]: Obrigado! Vocês são minha última esperança.</span>`;
+    }, 1200);
+  } else {
+    $("senha-feedback").textContent = "Senha incorreta!";
+    $("senha-feedback").className = "senha-feedback erro";
+    $("senha").focus();
+  }
+}
+
 function configurarEventos() {
   $("processar").addEventListener("click", corrigirEDecodificar);
   $("limpar").addEventListener("click", limparCampos);
@@ -330,6 +365,10 @@ function configurarEventos() {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       corrigirEDecodificar();
     }
+  });
+  $("enviar-senha").addEventListener("click", verificarSenha);
+  $("senha").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") verificarSenha();
   });
   window.addEventListener("DOMContentLoaded", () => {
     $("entrada").focus();

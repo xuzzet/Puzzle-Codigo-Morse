@@ -34,6 +34,12 @@
         <div class="progress" id="progress"></div>
       </div>
       <output class="resultado" id="saida" aria-live="polite" role="status"></output>
+      <div class="senha-camada" id="senha-camada" hidden>
+        <label for="senha" class="visually-hidden">Senha</label>
+        <input type="text" id="senha" maxlength="20" autocomplete="off" placeholder="Digite a senha...">
+        <button id="enviar-senha" type="button">ENVIAR SENHA</button>
+        <div class="senha-feedback" id="senha-feedback"></div>
+      </div>
       <div class="hint" id="dica">DICA: 1 = ponto (.), 0 = traço (-), _ = espaço entre letras.</div>
       <pre class="log-box" id="log" aria-live="polite" tabindex="0"></pre>
       <div class="operador-resposta" id="operador-resposta"></div>
